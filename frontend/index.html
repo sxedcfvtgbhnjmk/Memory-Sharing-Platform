@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memory Sharing Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+      }
+      h1 {
+        text-align: center;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+      }
+      .btn {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px;
+        margin: 10px 0;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+      }
+      .btn:hover {
+        background-color: #45a049;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Memory Sharing Platform</h1>
+      <p>Store and View Memories on the Blockchain!</p>
+
+      <button class="btn" id="connectButton">Connect MetaMask</button>
+
+      <div id="memorySection" style="display: none">
+        <h3>Store a New Memory</h3>
+        <textarea
+          id="memoryContent"
+          rows="4"
+          placeholder="Write your memory..."
+        ></textarea>
+        <button class="btn" id="storeMemoryButton">Store Memory</button>
+        <h3>View Memory</h3>
+        <input
+          type="text"
+          id="viewAddress"
+          placeholder="Enter Ethereum address to view memory"
+        />
+        <button class="btn" id="viewMemoryButton">View Memory</button>
+        <p id="viewedMemory"></p>
+      </div>
+
+      <div id="status"></div>
+    </div>
+
+    <script>
+      // Check if Web3 is injected (MetaMask)
+      if (typeof window.ethereum !== "undefined") {
+        console.log("MetaMask is available!");
+      } else {
+        alert("MetaMask is not available. Please install it!");
+      }
+
+      // Initialize Web3 and contract variables
+      let web3;
+      let accounts;
+      let contract;
+      const contractAddress = "0x84d70fDC147e20c95C6D4320D34832B43Bf36e00";
+      const contractABI = [
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "memoryContent",
+              type: "string",
+            },
+          ],
+          name: "MemoryStored",
+          type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getMemory",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "memoryContent",
+              type: "string",
+            },
+          ],
+          name: "storeMemory",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+      ];
+      // Connect to MetaMask
+      async function connectMetaMask() {
+        try {
+          // Request accounts from MetaMask
+          accounts = await ethereum.request({ method: "eth_requestAccounts" });
+          web3 = new Web3(window.ethereum);
+          contract = new web3.eth.Contract(contractABI, contractAddress);
+          document.getElementById("status").innerText =
+            "Connected to MetaMask!";
+          document.getElementById("memorySection").style.display = "block";
+        } catch (error) {
+          console.error("Error connecting to MetaMask:", error);
+          alert("Failed to connect to MetaMask");
+        }
+      }
+
+      // Store a memory on the blockchain
+      async function storeMemory() {
+        const memoryContent = document.getElementById("memoryContent").value;
+        if (!memoryContent) {
+          alert("Memory content cannot be empty!");
+          return;
+        }
+
+        try {
+          const accounts = await web3.eth.getAccounts();
+          const userAddress = accounts[0];
+
+          // Call the storeMemory function of the contract
+          await contract.methods
+            .storeMemory(memoryContent)
+            .send({ from: userAddress });
+
+          document.getElementById("status").innerText =
+            "Memory stored successfully!";
+        } catch (error) {
+          console.error("Error storing memory:", error);
+          alert("Failed to store memory");
+        }
+      }
+
+      // View a memory by address
+      async function viewMemory() {
+        const address = document.getElementById("viewAddress").value;
+        if (!address) {
+          alert("Please enter an Ethereum address!");
+          return;
+        }
+
+        try {
+          const memoryContent = await contract.methods
+            .getMemory(address)
+            .call();
+          document.getElementById("viewedMemory").innerText =
+            "Memory: " + memoryContent;
+        } catch (error) {
+          console.error("Error fetching memory:", error);
+          document.getElementById("viewedMemory").innerText =
+            "Failed to fetch memory.";
+        }
+      }
+
+      // Event listeners for buttons
+      document
+        .getElementById("connectButton")
+        .addEventListener("click", connectMetaMask);
+      document
+        .getElementById("storeMemoryButton")
+        .addEventListener("click", storeMemory);
+      document
+        .getElementById("viewMemoryButton")
+        .addEventListener("click", viewMemory);
+    </script>
+  </body>
+</html>

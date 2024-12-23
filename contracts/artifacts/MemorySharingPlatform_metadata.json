@@ -1,0 +1,97 @@
+{
+	"compiler": {
+		"version": "0.8.26+commit.8a97fa7a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "memoryContent",
+						"type": "string"
+					}
+				],
+				"name": "MemoryStored",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "getMemory",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "memoryContent",
+						"type": "string"
+					}
+				],
+				"name": "storeMemory",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"project-08/contracts/project.sol": "MemorySharingPlatform"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"project-08/contracts/project.sol": {
+			"keccak256": "0xf164cd0cc99edf1c274ce2e623918d912101104087e127e3c808082b3b010d98",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e190a0d86506136ab44230351148ca1a226d92dc471155edcabc4427b3ea2b10",
+				"dweb:/ipfs/QmXEN2UyMemTikczbqw4Qvo9nZy52gv6S4XN7C6t7sb5xH"
+			]
+		}
+	},
+	"version": 1
+}
